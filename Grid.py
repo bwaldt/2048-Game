@@ -179,6 +179,8 @@ class Grid:
         else:
             return None
 
+
+
 if __name__ == '__main__':
     g = Grid()
     g.map[0][0] = 2

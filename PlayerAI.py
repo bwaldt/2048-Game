@@ -1,5 +1,7 @@
 from random import randint
 from BaseAI import BaseAI
+from Displayer  import Displayer
+
 
 class PlayerAI(BaseAI):
     def _init_(self):
@@ -13,58 +15,66 @@ class PlayerAI(BaseAI):
 
     def getMove(self, grid):
         moves = grid.getAvailableMoves()
-        return moves[randint(0, len(moves) - 2)] if moves else None
+        rv = self.alpha_beta(grid, 4, -999, 999,True)
+        return moves[randint(0, len(moves) - 1)] if moves else None
 
-    def alpha_beta_max(self, grid, depth, alpha, beta):
+    def alpha_beta(self, grid, depth, alpha, beta, maxPlayer):
+        print 'Depth: ', depth
         if depth == 0:
-            h = 16 - grid.getAvailableCells()
+            print grid.getAvailableCells()
+            print 'Hueristic: ', h
             return (grid, h)
 
         moves = grid.getAvailableMoves()
 
-        if moves == []:
-            print "No moves"
+        if maxPlayer == True:
 
-        for child in moves:
-            newgrid = grid.clone()
-            newgrid.move(child)
-            compgrid, utility = self.alpha_beta_min(newgrid, depth - 1, alpha, beta)
+            if moves == []:
+                print "No moves"
 
-            if utility > maxUtility:
-                (maxChild, maxUtility) = (compgrid, utility)
-
-            if maxUtiliy > beta:
-                break
-
-            if maxUtiliy > alpha:
-                alpha = maxUtility
-
-        return (maxChild, maxUtility)
+            maxChild, maxUtility = 0, alpha
 
 
-    def alpha_beta_min(self, grid, depth, apha, beta):
-        if depth == 0:
-            h = 16 - grid.getAvailableCells()
-            return (grid, h)
+            for child in moves:
+                newgrid = grid.clone()
+                newgrid.move(child)
+                compgrid, utility = self.alpha_beta(newgrid, depth - 1, alpha, beta, False)
 
-        moves = grid.getAvailableMoves()
+                print '$$$$$$$$$$$$$$$$$$$', utility
 
-        if moves == []:
-            print "No moves"
+                if utility > maxUtility:
+                    maxChild, maxUtility = compgrid, utility
 
+                if maxUtility > beta:
+                    break
 
-        for child in moves:
-            newgrid = grid.clone()
-            newgrid.move(child)
-            usergrid, utility = self.alpha_beta_max(newgrid, depth - 1, alpha, beta)
+                if maxUtility > alpha:
+                    alpha = maxUtility
+                    print 'Alpha: ', alpha
 
-            if utility < minUtility:
-                (minChild, minUtility) = (usergrid, utility)
+            return (maxChild, maxUtility)
 
-            if minUtiliy < alpha:
-                break
+        else: # COMPUTER / MIN PLAYER
 
-            if minUtiliy < beta:
-                beta = minUtility
+            if moves == []:
+                print "No moves"
 
-        return (minChild, minUtility)
+            minChild, minUtility = 0,beta
+
+            for child in moves:
+                newgrid = grid.clone()
+                newgrid.move(child)
+                usergrid, utility = self.alpha_beta(newgrid, depth - 1, alpha, beta, True)
+
+                if utility < minUtility:
+                    minChild, minUtility = usergrid, utility
+
+                if minUtility < alpha:
+                    break
+
+                if minUtility < beta:
+                    beta = minUtility
+                    print 'Beta:', beta
+
+            return (minChild, minUtility)
+

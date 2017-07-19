@@ -19,7 +19,7 @@ actionDic = {
 
 # Time Limit Before Losing
 timeLimit = 0.2
-allowance = 0.05
+allowance = 0.15
 
 class GameManager:
     def __init__(self, size = 4):
@@ -104,7 +104,11 @@ class GameManager:
             self.updateAlarm(time.clock())
 
             turn = 1 - turn
-        print maxTile
+        print "MAX TILE:" , maxTile
+        return self.grid.getMaxTile()
+
+
+
 
     def isGameOver(self):
         return not self.grid.canMove()
@@ -131,7 +135,8 @@ def main():
     gameManager.setPlayerAI(playerAI)
     gameManager.setComputerAI(computerAI)
 
-    gameManager.start()
+    maxTileInGame = gameManager.start()
+    return maxTileInGame
 
 if __name__ == '__main__':
     main()
